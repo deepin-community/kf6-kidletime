@@ -1,4 +1,15 @@
 #!/usr/bin/make -f
 
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all optimize=+lto
+
+include /usr/share/dpkg/architecture.mk
+
+ifneq (linux,$(DEB_HOST_ARCH_OS))
+        EXTRA_CMAKE_ARGS += -DWITH_WAYLAND=OFF
+endif
+
 %:
 	dh $@
+
+override_dh_auto_configure:
+	dh_auto_configure -- -DBUILD_QCH=ON $(EXTRA_CMAKE_ARGS)
